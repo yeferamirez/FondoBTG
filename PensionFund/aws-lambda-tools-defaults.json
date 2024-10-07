@@ -1,0 +1,20 @@
+
+{
+    "region" : "us-east-1",
+    "profile" : "default",
+    "configuration" : "Release",
+    "framework"     : "net6.0",
+    "function-name" : "PensionFund",
+    "package-type"  : "Zip",
+    "function-handler" : "PensionFund",
+    "function-memory-size" : 256,
+    "function-role"        : "arn:aws:iam::277707102656:role/lambda_exec_PensionFund",
+    "function-timeout"     : 10,
+    "function-runtime"     : "dotnet6",
+    "function-architecture" : "x86_64",
+    "function-subnets"      : "",
+    "function-security-groups" : "",
+    "tracing-mode"             : "PassThrough",
+    "environment-variables"    : "",
+    "image-tag"                : ""
+}
