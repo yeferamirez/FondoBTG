@@ -56,7 +56,7 @@ namespace PensionFund.Business.Services
                         return new TransactionResponse(ResponseConstants.FAILED_PROCESS, ExceptionConstants.NOT_VALID_AMOUNT);
                     await _cacheRepository.SaveClient(client);
                     await _cacheRepository.SaveTransaction(transaction);
-                    await _notificationService.SendNotification(transactionRequest);
+                    //await _notificationService.SendNotification(transactionRequest);
                     return new TransactionResponse(transaction, ResponseConstants.SUCCESS_PROCESS);
                 }
                 return new TransactionResponse(ResponseConstants.FAILED_PROCESS, $"{ExceptionConstants.NOT_VALID_VALUE} <{transaction.ProductName}>");
