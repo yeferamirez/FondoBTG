@@ -85,7 +85,7 @@ namespace PensionFund.IoCContainer
                    var client = new AmazonSimpleNotificationServiceClient();
                    return new SmsClient(client);
                })
-          .Named<ISmsClient>("RdsClient")
+          .Named<ISmsClient>("SmsClient")
           .SingleInstance();
         }
 
