@@ -2,7 +2,8 @@
 {
     public class FundConfigurationResponse
     {
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public string FundName { get; set; }
+        public string Category { get; set; }
+        public string MinimumCost { get; set; }
     }
 }

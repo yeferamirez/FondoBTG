@@ -3,7 +3,7 @@ using PensionFund.Infrastructure.Interfaces.Repositories;
 
 namespace PensionFund.Test.Mock
 {
-    public class MockCacheRepository : Mock<ICacheRepository>
+    public class MockCacheRepository : Mock<IDynamoRepository>
     {
         public MockCacheRepository GetTransaction()
         {

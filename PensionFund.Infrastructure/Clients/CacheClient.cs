@@ -3,7 +3,7 @@ using PensionFund.Infrastructure.Interfaces.Clients;
 
 namespace PensionFund.Infrastructure.Clients
 {
-    public class CacheClient : ICacheClient
+    public class CacheClient : IDynamoClient
     {
         private readonly IAmazonDynamoDB _clientDynamo;
 

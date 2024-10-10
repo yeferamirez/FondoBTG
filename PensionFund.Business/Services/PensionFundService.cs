@@ -9,10 +9,10 @@ namespace PensionFund.Business.Services
 {
     public class PensionFundService
     {
-        private readonly ICacheRepository _cacheRepository;
+        private readonly IDynamoRepository _cacheRepository;
         private readonly IRdsRepository _rdsRepository;
         private readonly NotificationService _notificationService;
-        public PensionFundService(ICacheRepository cacheRepository, 
+        public PensionFundService(IDynamoRepository cacheRepository,
             IRdsRepository rdsRepository, NotificationService notificationService)
         {
             _cacheRepository = cacheRepository;
@@ -112,10 +112,10 @@ namespace PensionFund.Business.Services
         {
             try
             {
-                var fundconfigurations = await _rdsRepository.GetFundconfiguration();
-                if (fundconfigurations.Count == 0)
-                    return new TransactionResponse(ResponseConstants.FAILED_PROCESS, ExceptionConstants.NOT_EXIST_PRODUCT);
-                return new TransactionResponse(fundconfigurations, ResponseConstants.SUCCESS_PROCESS);
+                var fundConfiguration = await _cacheRepository.GetFundConfigurations();
+                if (fundConfiguration.Count == 0)
+                    return new TransactionResponse(ResponseConstants.FAILED_PROCESS, ExceptionConstants.NOT_EXIST_PRODUCTS);
+                return new TransactionResponse(fundConfiguration, ResponseConstants.SUCCESS_PROCESS);
             }
             catch (Exception)
             {

@@ -2,7 +2,7 @@
 
 namespace PensionFund.Infrastructure.Interfaces.Clients
 {
-    public interface ICacheClient
+    public interface IDynamoClient
     {
         public Task<IAmazonDynamoDB> GetConnection();
     }

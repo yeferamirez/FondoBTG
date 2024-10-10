@@ -53,7 +53,7 @@ namespace PensionFund.IoCContainer
             builder
                 .Register((context, parameters) => new CacheClient(
                     context.Resolve<IAmazonDynamoDB>()))
-           .Named<ICacheClient>("DynamoClient")
+           .Named<IDynamoClient>("DynamoClient")
            .SingleInstance();
 
             builder
@@ -112,7 +112,7 @@ namespace PensionFund.IoCContainer
             builder
               .Register((context, parameters) =>
               {
-                  var dynamoClient = context.ResolveNamed<ICacheClient>("DynamoClient");
+                  var dynamoClient = context.ResolveNamed<IDynamoClient>("DynamoClient");
                   var parameterStoreClient = context.ResolveNamed<ISystemManagerClient>("SystemManagerClient");
                   var parameterStoreRepository = new ParameterStoreRepository(parameterStoreClient, SYSTEM_MANAGER_PATH);
                   return new CacheRepository(dynamoClient,
@@ -120,7 +120,7 @@ namespace PensionFund.IoCContainer
                       parameterStoreRepository.GetParameterStore(ParameterStoreConstants.TRANSACTIONS_TABLE_NAME).GetAwaiter().GetResult(),
                       parameterStoreRepository.GetParameterStore(ParameterStoreConstants.CLIENT_TABLE_NAME).GetAwaiter().GetResult());
               })
-              .As<ICacheRepository>()
+              .As<IDynamoRepository>()
               .SingleInstance();
 
             builder
@@ -150,7 +150,7 @@ namespace PensionFund.IoCContainer
         {
             builder
                 .Register((context, parameters) => new PensionFundService(
-                    context.Resolve<ICacheRepository>(),
+                    context.Resolve<IDynamoRepository>(),
                     context.Resolve<IRdsRepository>(),
                     context.Resolve<NotificationService>()
                     ))

@@ -2,6 +2,7 @@
 using Amazon.DynamoDBv2.Model;
 using Newtonsoft.Json;
 using PensionFund.Domain.Entities;
+using PensionFund.Domain.Entities.Responses;
 using PensionFund.Infrastructure.Interfaces.Clients;
 using PensionFund.Infrastructure.Interfaces.Repositories;
 using PensionFund.Infrastructure.Utils;
@@ -9,13 +10,13 @@ using Serilog;
 
 namespace PensionFund.Infrastructure.Repositories
 {
-    public class CacheRepository : ICacheRepository
+    public class CacheRepository : IDynamoRepository
     {
-        private readonly ICacheClient _cacheClient;
+        private readonly IDynamoClient _cacheClient;
         private readonly string _configurationsTableName;
         private readonly string _transactionsTableName;
         private readonly string _clientTableName;
-        public CacheRepository(ICacheClient cacheClient, string configurationsTableName,
+        public CacheRepository(IDynamoClient cacheClient, string configurationsTableName,
             string transactionsTableName, string clientTableName)
         {
             _cacheClient = cacheClient;
@@ -112,6 +113,42 @@ namespace PensionFund.Infrastructure.Repositories
             catch (Exception)
             {
                 Log.Error("There was an error while getting the fund configuration from the cache");
+                throw;
+            }
+        }
+
+        public async Task<List<FundConfigurationResponse>> GetFundConfigurations()
+        {
+            try
+            {
+                var itemsManagers = new List<FundConfigurationResponse>();
+                var connection = await _cacheClient.GetConnection();
+                ScanRequest scanRequest = new ScanRequest()
+                {
+                    TableName = _configurationsTableName
+                };
+
+                var result = await connection.ScanAsync(scanRequest);
+                if (result.Items.Count > 0)
+                {
+                    foreach (var item in result.Items)
+                    {
+                        var fundConfigurationRequestDocument = Document.FromAttributeMap(item);
+                        string fundConfigurationRequestJson = fundConfigurationRequestDocument.ToJson();
+                        var fundConfigurationsResponse = JsonConvert.DeserializeObject<FundConfigurationResponse>(fundConfigurationRequestJson);
+                        itemsManagers.Add(fundConfigurationsResponse);
+                    }
+                    return itemsManagers;
+                }
+                else
+                {
+                    Log.Error("Fund configuration is null or the table");
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                Log.Error("There was an error while getting the fund configurations from the dynamo");
                 throw;
             }
         }

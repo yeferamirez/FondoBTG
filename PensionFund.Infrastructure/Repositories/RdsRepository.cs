@@ -73,8 +73,8 @@ namespace PensionFund.Infrastructure.Repositories
                             while (await dataReader.ReadAsync())
                             {
                                 var fundConfiguration = new FundConfigurationResponse();
-                                fundConfiguration.Name = dataReader[0].ToString();
-                                fundConfiguration.Type = dataReader[1].ToString();
+                                fundConfiguration.FundName = dataReader[0].ToString();
+                                fundConfiguration.Category = dataReader[1].ToString();
                                 fundConfigurations.Add(fundConfiguration);
                             }
                             await connection.DisposeAsync();
