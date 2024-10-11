@@ -40,23 +40,29 @@ namespace PensionFund.Business.Services
             {
                 var transaction = TransactionUtil.BuildObjectTransaction(transactionRequest);
                 var subscribed = await _cacheRepository.GetTransactionByClientName(transaction.ClientName);
+
                 if (TransactionUtil.ValidateExist(transaction, subscribed))
                     return new TransactionResponse(ResponseConstants.FAILED_PROCESS, ExceptionConstants.NOT_VALID_CLIENT);
+
                 var fundConfiguration = await _cacheRepository.GetFundConfigurationByName(transaction.ProductName);
                 var client = await _cacheRepository.GetClient(transaction.ClientName);
+
                 if (fundConfiguration != null && client == null)
                 {
                     client = TransactionUtil.BuildClient(transaction);
                     await _cacheRepository.SaveClient(client);
                 }
-                if (fundConfiguration != null && fundConfiguration.MinimumCost == transaction.Value)
+                if (fundConfiguration != null && fundConfiguration.MinimumCost <= transaction.Value)
                 {
-                    client.InitialValue = client.InitialValue - (subscribed == null ? transaction.Value : subscribed.Value);
+                    client.InitialValue = client.InitialValue - transaction.Value;
+
                     if (client.InitialValue <= 0)
                         return new TransactionResponse(ResponseConstants.FAILED_PROCESS, ExceptionConstants.NOT_VALID_AMOUNT);
+
                     await _cacheRepository.SaveClient(client);
                     await _cacheRepository.SaveTransaction(transaction);
                     //await _notificationService.SendNotification(transactionRequest);
+
                     return new TransactionResponse(transaction, ResponseConstants.SUCCESS_PROCESS);
                 }
                 return new TransactionResponse(ResponseConstants.FAILED_PROCESS, $"{ExceptionConstants.NOT_VALID_VALUE} <{transaction.ProductName}>");

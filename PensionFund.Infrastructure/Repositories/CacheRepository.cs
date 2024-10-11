@@ -160,19 +160,17 @@ namespace PensionFund.Infrastructure.Repositories
                 var connection = await _cacheClient.GetConnection();
                 Transaction transaction = new Transaction();
                 List<Transaction> transactions = new List<Transaction>();
-                QueryRequest queryRequest = new QueryRequest
+                var scanRequest = new ScanRequest
                 {
                     TableName = _transactionsTableName,
-                    IndexName = "ModificationDate-index",
-                    KeyConditionExpression = "ModificationDate = :v_date",
+                    FilterExpression = $"ModificationDate >= :v_date",
                     ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                     {
-                        {":v_date", new AttributeValue { S =  date }}
-                    },
-                    ScanIndexForward = true
+                        { ":v_date", new AttributeValue { S = date } }
+                    }
                 };
 
-                var result = await connection.QueryAsync(queryRequest);
+                var result = await connection.ScanAsync(scanRequest);
                 if (result.Items.Count > 0)
                 {
                     foreach (var item in result.Items)
